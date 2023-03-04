@@ -1,30 +1,46 @@
 import { Component } from '@angular/core';
-import { count, Observable } from 'rxjs';
+import { filter, from, interval, map, Observable, reduce, scan } from 'rxjs';
 
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styles: [
+    '.app-root {margin: 2rem}'
+  ],
+  template: `
+    <div class="app-root">
+      <h2>Count</h2>
+      <h3>{{ valueCount }}</h3>
+    </div>
+  `
 })
 export class AppComponent {
+  valueCount: number = 10;
 
-  observable = new Observable(subscriber => {
-    let count = 0
-
-    const id = setInterval(() => {
-      subscriber.next(count)
-      subscriber.complete()
-      count = +1
-    }, 1000)
-
-    return () => {
-      console.log('called')
-      clearInterval(id)
-    }
-
-  }).subscribe(
-    { next: value => console.log('next:', value) }
-  );
-
+  counter$ = interval(1000)
+    .pipe(
+      map(() => -1),
+      scan(
+        (acc, curr) => { return acc + curr }, 5
+      ),
+      filter(value => value >= 0)
+    )
+    .subscribe(
+      value => this.valueCount = value
+    );
 }
+
+const numbers = [1, 2, 3]
+
+from(numbers).pipe(
+  reduce(
+    (sum: number, val: number) => { return sum + val }, 0
+  )
+).subscribe(console.log)
+
+from(numbers).pipe(
+  scan(
+    (sum: number, val: number) => { return sum + val }, 0
+  )
+).subscribe(console.log)
+
