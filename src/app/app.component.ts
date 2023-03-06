@@ -1,54 +1,42 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { filter, from, fromEvent, interval, map, Observable, reduce, scan, takeUntil, takeWhile } from 'rxjs';
+import { Component } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 
 
 @Component({
   selector: 'app-root',
-  styles: [
-    '.app-root {margin: 2rem}'
-  ],
   template: `
     <div class="app-root">
-      <h2>Count</h2>
-      <h3>{{ valueCount }}</h3>
-      <button type="button" class="btn btn-danger" id="stopButton">Stop</button>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div formGroupName="store">
+          <input type="text"
+            placeholder="Branch ID"
+            formControlName="branch">
+          <input type="text"
+            placeholder="Manager Code"
+            formControlName="code">
+        </div>
+        <div class="stock-inventory_buttons">
+          <button
+            type="submit"
+            [disabled]="form.invalid">
+            Order stock
+          </button>
+        </div>
+        <pre>{{ form.value | json }}</pre>
+      </form>
     </div>
   `
 })
 export class AppComponent {
-  valueCount: number = 5
+  form = new FormGroup({
+    store: new FormGroup({
+      branch: new FormControl('1'),
+      code: new FormControl('2')
+    })
+  })
 
-  stopButton = document.getElementById('stopButton')
-  stopClick$ = fromEvent(this.stopButton, 'click')
-
-  counter$ = interval(1000)
-    .pipe(
-      map(() => -1),
-      scan(
-        (acc, curr) => { return acc + curr }, 5
-      ),
-      takeWhile(value => value >= 0),
-      takeUntil(this.stopClick$)
-    )
-    .subscribe(
-      value => {
-        this.valueCount = value
-        console.log(this.stopButton)
-      }
-    );
+  onSubmit() {
+    console.log('Submite', this.form.value)
+  }
 }
-
-const numbers = [1, 2, 3]
-
-from(numbers).pipe(
-  reduce(
-    (sum: number, val: number) => { return sum + val }, 0
-  )
-).subscribe(console.log)
-
-from(numbers).pipe(
-  scan(
-    (sum: number, val: number) => { return sum + val }, 0
-  )
-).subscribe(console.log)
 
