@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { Product } from './app.interface';
 
 
 @Component({
@@ -7,17 +8,16 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
   template: `
     <div class="app-root">
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
-
         <stock-branch
           [parent]="form">
         </stock-branch>
         <stock-selector
-          [parent]="form">
+          [parent]="form"
+          [products]="products">
         </stock-selector>
         <stock-products
           [parent]="form">
         </stock-products>
-
         <div class="stock-inventory_buttons">
           <button
             type="submit"
@@ -31,10 +31,19 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
   `
 })
 export class AppComponent {
+
+  products: Product[] = [
+    { "id": 1, "price": 2800, "name": "MacBook Pro" },
+    { "id": 1, "price": 50, "name": "USB-C Adaptor" },
+    { "id": 1, "price": 400, "name": "iPod" },
+    { "id": 1, "price": 900, "name": "iPhone" },
+    { "id": 1, "price": 600, "name": "Apple Watch" }
+  ]
+
   form = new FormGroup({
     store: new FormGroup({
-      branch: new FormControl('1'),
-      code: new FormControl('2')
+      branch: new FormControl(),
+      code: new FormControl()
     }),
     selector: new FormGroup({
       product_id: new FormControl(''),
