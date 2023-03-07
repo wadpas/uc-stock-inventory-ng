@@ -2,12 +2,15 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 
 import { AppComponent } from './app.component';
 import { StockBranchComponent } from './components/stock-branch.component';
 import { StockProductsComponent } from './components/stock-products.component';
 import { StockSelectorComponent } from './components/stock-selector.component';
+import { AppService } from './app.service';
 
 @NgModule({
   declarations: [
@@ -20,9 +23,12 @@ import { StockSelectorComponent } from './components/stock-selector.component';
     BrowserModule,
     NgbModule,
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [
+    AppService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

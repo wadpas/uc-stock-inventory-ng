@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { Product } from './app.interface';
+import { Component, OnInit } from '@angular/core';
+import { FormArray, FormBuilder } from '@angular/forms';
+import { Item, Product } from './app.interface';
+import { AppService } from './app.service';
 
 
 @Component({
@@ -32,32 +33,37 @@ import { Product } from './app.interface';
     </div>
   `
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+  products: Product[] = []
 
-  products: Product[] = [
-    { "id": 1, "price": 2800, "name": "MacBook Pro" },
-    { "id": 2, "price": 50, "name": "USB-C Adaptor" },
-    { "id": 3, "price": 400, "name": "iPod" },
-    { "id": 4, "price": 900, "name": "iPhone" },
-    { "id": 5, "price": 600, "name": "Apple Watch" }
-  ]
+  constructor(
+    private fb: FormBuilder,
+    private appService: AppService
+  ) { }
 
-  form = new FormGroup({
-    store: new FormGroup({
-      branch: new FormControl(),
-      code: new FormControl()
+  ngOnInit() {
+    this.appService
+      .getProducts()
+      .subscribe((products: Product[]) => this.products = products)
+
+    this.appService
+      .getCartItems()
+      .subscribe((cart: Item[]) => cart.forEach(item => this.addStock(item)))
+  }
+
+  form = this.fb.group({
+    store: this.fb.group({
+      branch: '',
+      code: ''
     }),
     selector: this.createStock({ product_id: 0, quantity: 10 }),
-    stock: new FormArray([
-      this.createStock({ product_id: 2, quantity: 50 }),
-      this.createStock({ product_id: 3, quantity: 20 })
-    ])
+    stock: this.fb.array([])
   })
 
   createStock(stock) {
-    return new FormGroup({
-      product_id: new FormControl(parseInt(stock.product_id)),
-      quantity: new FormControl(stock.quantity)
+    return this.fb.group({
+      product_id: (parseInt(stock.product_id)),
+      quantity: (stock.quantity)
     })
   }
 
